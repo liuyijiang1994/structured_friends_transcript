@@ -51,10 +51,11 @@ def parse_p(p_list, s, e):
     scenes_data = {}
     for tag in p_list:
         line = str(tag)
+        # print(line)
         if in_scene:
-            if ':</b>' not in line and '</strong>:' not in line and '[Scene' not in line:
+            if ':</b>' not in line and '</strong>:' not in line and '[Scene' not in line and ':</strong>' not in line:
                 continue
-            if '[Scene' not in line and (':</b>' in line or '</strong>:' in line):
+            if '[Scene' not in line and (':</b>' in line or '</strong>:' in line or ':</strong>' in line):
                 speakers, utt = parse_line(tag)
                 if speakers is not None:
                     u += 1
@@ -77,17 +78,24 @@ def parse_p(p_list, s, e):
     return episode_data
 
 
-folder = 'season'
-data = {}
-for filename in os.listdir(folder):
-    htmlfile = open(os.path.join(folder, filename), 'r', encoding='utf-8')
-    htmlhandle = htmlfile.read()
-    soup = BeautifulSoup(htmlhandle, "lxml")
-    res1 = soup.find_all("p")
-    s = int(filename[:2])
-    e = int(filename[2:4])
-    episode_data = parse_p(res1, s, e)
-    data[episode_id(s, e)] = episode_data
-with open('friends_transcript.json', 'w', encoding='utf-8') as w:
-    w.write(json.dumps(data))
-print(len(data.keys()))
+htmlfile = open('season/0911.html', 'r', encoding='utf-8')
+htmlhandle = htmlfile.read()
+soup = BeautifulSoup(htmlhandle, "lxml")
+res1 = soup.find_all("p")
+episode_data = parse_p(res1, 9, 11)
+
+#
+# folder = 'season'
+# data = {}
+# for filename in os.listdir(folder):
+#     htmlfile = open(os.path.join(folder, filename), 'r', encoding='utf-8')
+#     htmlhandle = htmlfile.read()
+#     soup = BeautifulSoup(htmlhandle, "lxml")
+#     res1 = soup.find_all("p")
+#     s = int(filename[:2])
+#     e = int(filename[2:4])
+#     episode_data = parse_p(res1, s, e)
+#     data[episode_id(s, e)] = episode_data
+# with open('friends_transcript.json', 'w', encoding='utf-8') as w:
+#     w.write(json.dumps(data))
+# print(len(data.keys()))
